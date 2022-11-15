@@ -1,0 +1,89 @@
+---
+title: "001.학교기본현황"
+author: "김병수"
+date: "2022-11-15"
+output: html_document
+---
+데이터 출처
+1. EDS
+2. 공공데이터포털(학교 위치)
+
+```{r}
+if(!require("tidyverse")){
+  install.packages(tidyverse)
+  require(tidyverse)
+}
+if(!require("readxl")){
+  install.packages(readxl)
+  require(readxl)
+}
+
+#2022년 10월 자료는 제주초중고특수학교현황에 들어감
+df_school <- read_excel("./제주초중고특수학교현황.xlsx",sheet=3)
+head(df_school)
+```
+
+
+```{r}
+setwd("./")
+getwd()
+files <- list.files(path=getwd())
+#2013년도에서 2021년을 포함
+files[4:12]
+```
+
+
+```{r}
+for (i in 4:12){
+  xsl <- read_excel(files[i])
+  df_school <- merge(df_school, xsl, by="학교코드")
+}
+View(df_school)
+```
+
+
+```{r}
+df_school <- as.data.frame(df_school)
+#현재 df_school은 티블(tibble) 구조
+
+df_s4 <- df_school %>%
+  filter(학교급=='초등학교'|학교급=='중학교'|학교급=='고등학교'|학교급=='특수학교')
+
+
+
+
+
+df_s4
+```
+
+```{r}
+ggplot(data=df_s4, aes(x=경도, y=위도)) +
+  geom_point(aes(x=경도,y=위도, size=학생수_계, colour=학교급))
+
+```
+```{r}
+ggplot(data=df_s4, aes(학교급)) +
+  geom_bar()
+```
+
+
+```{r}
+ggplot(data=df_s4, aes(학교급)) +
+  geom_bar(aes(fill=factor(총학급수)))
+```
+
+```{r}
+ggplot(data=df_s4, aes(학교급)) +
+  geom_bar(aes(fill=factor(총학급수))) +
+  coord_flip()
+```
+
+```{r}
+ggplot(data=df_s4, aes(학교급)) +
+  geom_bar(aes(fill=factor(총학급수))) +
+  facet_wrap(~ 자치구)
+```
+```{r}
+
+```
+
